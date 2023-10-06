@@ -39,6 +39,7 @@ const Service = () => {
       .post("http://localhost:8000/api/service", data)
       .then((res) => {
         fetchServices();
+        console.log(res);
         toast.success(res.data.success, {
           position: "top-right",
           autoClose: 1000,
@@ -70,6 +71,7 @@ const Service = () => {
       .delete(`http://localhost:8000/api/service/${id}`)
       .then((res) => {
         fetchServices();
+        console.log(res);
         toast.success(res.data.success, {
           position: "top-right",
           autoClose: 1000,
@@ -82,6 +84,7 @@ const Service = () => {
         });
       })
       .catch((err) => {
+        console.log(err);
         toast.error(err.response.data.error, {
           position: "top-right",
           autoClose: 1000,

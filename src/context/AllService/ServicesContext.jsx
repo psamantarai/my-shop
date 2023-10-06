@@ -53,7 +53,7 @@ export const ServiceContextProvider = ({ children }) => {
 
   return (
     <ServicesContext.Provider
-      value={{ serviceList, serviceTypeList, serviceNameList }}
+      value={{ serviceList, serviceTypeList, serviceNameList, fetchServices }}
     >
       {children}
     </ServicesContext.Provider>
