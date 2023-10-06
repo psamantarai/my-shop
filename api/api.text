@@ -1,0 +1,11 @@
+POST:
+service 👍
+transaction 
+accounts/opening_balance
+
+GET: 
+service 👍
+transaction
+accounts/current_day_closing_balance
+accounts/current_day_revenue
+accounts/prev_day_revenue
