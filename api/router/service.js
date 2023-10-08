@@ -60,13 +60,16 @@ router.delete("/service/:id", (req, res) => {
 
   db.query(q, serviceId, (error, results) => {
     const errMessage = "Error Deleting Service.";
-    const successMessage = "Service Deleted.";
+    const successMessage = "Service Deleted!";
+
     if (error) {
-      console.error(errMessage, error);
-      return res.sendStatus(500).json({ error: errMessage }); // Internal server error
+      if (error.code === "ER_ROW_IS_REFERENCED_2") {
+        return res.status(500).json({ error: "Can't delete this service!" });
+      }
+      return res.status(500).json({ error: "Failure in Service delete!" });
     } else {
       console.log(successMessage);
-      return res.status(200).json({ success: successMessage }); // OK
+      return res.status(200).json({ success: successMessage });
     }
   });
 });
@@ -77,9 +80,7 @@ router.get("/service/type", (req, res) => {
   db.query(q, (error, data) => {
     if (error) {
       console.error("Error Fetching service type:", error);
-      return res
-        .sendStatus(500)
-        .json({ error: "Error Fetching service type!" }); // Internal server error
+      return res.status(500).json({ error: "Error Fetching service type!" }); // Internal server error
     }
     console.log("Service Type");
     return res.status(200).send(data); // OK
@@ -93,9 +94,7 @@ router.get("/service/:type", (req, res) => {
   db.query(q, service_type, (error, data) => {
     if (error) {
       console.error("Error Fetching service name:", error);
-      return res
-        .sendStatus(500)
-        .json({ error: "Error Fetching service name!" }); // Internal server error
+      return res.status(500).json({ error: "Error Fetching service name!" }); // Internal server error
     }
     // console.log("Service Type");
     return res.status(200).send(data); // OK
