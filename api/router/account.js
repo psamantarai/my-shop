@@ -15,7 +15,7 @@ const convert_Date = (date) => {
   return formattedDate;
 };
 
-// Get Current Balance, cureent day revenue, prev day revenue
+// Get Current Balance, current day revenue, prevday revenue
 router.get("/accounts", (req, res) => {
   const q = `SELECT date, opening_balance, closing_balance FROM my_shop.accounts ORDER BY date DESC LIMIT 2`;
   db.query(q, (error, data) => {
@@ -161,7 +161,7 @@ router.get("/accounts/check", (req, res) => {
     }
 
     if (result[0].number === 0) {
-      return res.status(200).json({ success: "Welcome" });
+      return res.status(200).json({ success: "Welcome!" });
     }
   });
 });

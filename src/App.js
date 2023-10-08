@@ -8,11 +8,12 @@ import Transaction from "./pages/transaction/Transaction";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Report from "./pages/report/Report";
 import "./layout.scss";
+import Welcome from "./pages/welcome/Welcome";
 
 function App() {
   return (
     <div className="App">
-      <Router>
+      {/* <Router>
         <Routes>
           <Route path="/" element={<Home />}>
             <Route index element={<Dashboard />} />
@@ -21,7 +22,8 @@ function App() {
             <Route path="reports" element={<Report />} />
           </Route>
         </Routes>
-      </Router>
+      </Router> */}
+      <Welcome />
       <ToastContainer />
     </div>
   );
