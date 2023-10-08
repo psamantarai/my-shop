@@ -14,6 +14,7 @@ router.get("/transaction", (req, res) => {
   });
 });
 
+//Post new transactions
 router.post("/transaction", (req, res) => {
   const transactionList = req.body;
   const query = {
@@ -65,7 +66,5 @@ router.post("/transaction", (req, res) => {
     return res.status(200).json({ success: "Transaction Saved!" });
   }
 });
-
-
 
 export default router;

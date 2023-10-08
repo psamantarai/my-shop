@@ -22,7 +22,7 @@ router.get("/accounts", (req, res) => {
     if (error) {
       console.error("Error storing data:", error);
       return res
-        .sendStatus(500)
+        .status(500)
         .json({ error: "Error fetching current balance." }); // Internal server error
     }
     const current_day_balance = data[0].closing_balance;
