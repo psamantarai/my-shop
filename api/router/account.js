@@ -21,9 +21,7 @@ router.get("/accounts", (req, res) => {
   db.query(q, (error, data) => {
     if (error) {
       console.error("Error storing data:", error);
-      return res
-        .status(500)
-        .json({ error: "Error fetching current balance." }); // Internal server error
+      return res.status(500).json({ error: "Error fetching current balance." }); // Internal server error
     }
     const current_day_balance = data[0].closing_balance;
     const current_day_revenue =
@@ -159,7 +157,6 @@ router.get("/accounts/check", (req, res) => {
       console.error("Error Fetching accounts: ", err);
       return res.status(500).json({ error: "Error Fetching accounts" });
     }
-
     if (result[0].number === 0) {
       return res.status(200).json({ success: "Welcome!" });
     }
