@@ -5,14 +5,14 @@ export const CheckOpeningBalance = createContext();
 
 export function CheckOpeningBalanceProvider({ children }) {
   const [isPresent, setIsPresent] = useState(true);
+  const [isNewUser, setIsNewUser] = useState(true);
 
-  const fetchOpeningBalance = async () => {
+  const fetchIsNewUser = async () => {
     await axios
       .get("http://localhost:8000/api/accounts/check")
       .then((res) => {
-        if (res.data.success) {
-          setIsPresent(false);
-        }
+        setIsPresent(res.data.isPresent);
+        setIsNewUser(res.data.newUser);
       })
       .catch((err) => {
         console.log(err);
@@ -20,10 +20,12 @@ export function CheckOpeningBalanceProvider({ children }) {
   };
 
   useEffect(() => {
-    fetchOpeningBalance();
+    fetchIsNewUser();
   }, []);
   return (
-    <CheckOpeningBalance.Provider value={{ isPresent, setIsPresent }}>
+    <CheckOpeningBalance.Provider
+      value={{ isNewUser, setIsNewUser, isPresent, setIsPresent }}
+    >
       {children}
     </CheckOpeningBalance.Provider>
   );

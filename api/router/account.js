@@ -127,27 +127,6 @@ router.post("/accounts/opening_balance", (req, res) => {
   });
 });
 
-//Warning message for creating opening balance
-router.get("/accounts/opening_balance", (req, res) => {
-  const get_query =
-    "SELECT DATE(date) AS current_day FROM accounts ORDER BY date DESC LIMIT 1";
-
-  db.query(get_query, (err, result) => {
-    if (err) {
-      console.error("Error fetching data", err);
-      return res
-        .status(500)
-        .json({ error: "Error Checking existance of balance!" });
-    }
-    const db_date = convert_Date(result[0].current_day);
-
-    const today = convert_Date(new Date());
-    if (today !== db_date) {
-      return res.status(200).json({ warning: "Update the opening_balance!" });
-    }
-    return res.status(200).json({ success: "Good Morning!" });
-  });
-});
 
 //Check for new user
 router.get("/accounts/check", (req, res) => {
@@ -158,7 +137,35 @@ router.get("/accounts/check", (req, res) => {
       return res.status(500).json({ error: "Error Fetching accounts" });
     }
     if (result[0].number === 0) {
-      return res.status(200).json({ success: "Welcome!" });
+      return res
+        .status(200)
+        .json({ newUser: true, greeting: "Welcome!", isPresent: false });
+    } else {
+      const get_query =
+        "SELECT DATE(date) AS current_day FROM accounts ORDER BY date DESC LIMIT 1";
+
+      db.query(get_query, (date_error, date_result) => {
+        if (date_error) {
+          console.error("Error fetching data", err);
+          return res
+            .status(500)
+            .json({ error: "Error Checking existance of balance!" });
+        }
+        const db_date = convert_Date(date_result[0].current_day);
+
+        const today = convert_Date(new Date());
+        if (today !== db_date) {
+          return res.status(200).json({
+            warning: "Update the opening_balance!",
+            isPresent: false,
+            newUser: false,
+            greeting: "Good Morning",
+          });
+        }
+        return res
+          .status(200)
+          .json({ success: "Good Morning!", isPresent: true, newUser: false });
+      });
     }
   });
 });

@@ -16,13 +16,17 @@ import Account from "./pages/account/Account";
 import MultiStage from "./pages/MultiStage/MultiStage";
 
 function App() {
-  const { isPresent } = useContext(CheckOpeningBalance);
-  console.log(isPresent);
+  const { isPresent, isNewUser } = useContext(CheckOpeningBalance);
+  const renderCheck = () => !(isPresent && !isNewUser);
+
+  console.log(
+    `isPresent : ${isPresent}  isNewUser: ${isNewUser}  logic: ${renderCheck()}`
+  );
   return (
     <div className="App">
       <Router>
         <Routes>
-          <Route path="/" element={isPresent ? <Home /> : <MultiStage />}>
+          <Route path="/" element={renderCheck() ? <MultiStage /> : <Home />}>
             <Route index element={<Dashboard />} />
             <Route path="transaction" element={<Transaction />} />
             <Route path="service" element={<Service />} />

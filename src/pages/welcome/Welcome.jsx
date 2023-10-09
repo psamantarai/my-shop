@@ -11,7 +11,7 @@ const Welcome = ({ setCount }) => {
           <p>Set Opening Balance</p>
           <ArrowCircleRightRoundedIcon
             className="btn"
-            onClick={(e) => {
+            onClick={() => {
               setCount(1);
             }}
           />

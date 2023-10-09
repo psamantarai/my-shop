@@ -3,7 +3,18 @@ import "./account.scss";
 import amountFormat from "../../utils/textConverter";
 import { CheckOpeningBalance } from "../../context/CheckOpeningBalanceContext/CheckOpeningBalanceContext";
 const Account = () => {
-  const { setIsPresent } = useContext(CheckOpeningBalance);
+  const { setIsNewUser, setIsPresent, isPresent, isNewUser } = useContext(
+    CheckOpeningBalance
+  );
+  const handleClick = () => {
+    if (isNewUser) {
+      // createOpeningBlance();
+    } else if (!isNewUser && !isPresent) {
+      //setNewDayOpeningBalance();
+    } else if (!isNewUser && isPresent) {
+      // updateCurrentDayOpeningBalance();
+    }
+  };
   return (
     <div className="account">
       <div className="account-container">
@@ -13,7 +24,7 @@ const Account = () => {
             <label htmlFor="opening-balance">Opening Balance</label>
             <input type="number" id="opening-balance" />
           </div>
-          <button onClick={() => setIsPresent(true)}>Set</button>
+          <button onClick={setIsPresent(true)}>Set</button>
         </div>
         <div className="down">
           <div className="prev-day-stats">
