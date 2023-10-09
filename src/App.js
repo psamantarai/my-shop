@@ -8,13 +8,21 @@ import Transaction from "./pages/transaction/Transaction";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Report from "./pages/report/Report";
 import "./layout.scss";
+import Welcome from "./pages/welcome/Welcome";
+import { useContext, useEffect } from "react";
+import { CheckOpeningBalance } from "./context/CheckOpeningBalanceContext/CheckOpeningBalanceContext";
+import axios from "axios";
+import Account from "./pages/account/Account";
+import MultiStage from "./pages/MultiStage/MultiStage";
 
 function App() {
+  const { isPresent } = useContext(CheckOpeningBalance);
+  console.log(isPresent);
   return (
     <div className="App">
       <Router>
         <Routes>
-          <Route path="/" element={<Home />}>
+          <Route path="/" element={isPresent ? <Home /> : <MultiStage />}>
             <Route index element={<Dashboard />} />
             <Route path="transaction" element={<Transaction />} />
             <Route path="service" element={<Service />} />
@@ -22,6 +30,7 @@ function App() {
           </Route>
         </Routes>
       </Router>
+
       <ToastContainer />
     </div>
   );

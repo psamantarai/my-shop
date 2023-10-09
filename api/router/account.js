@@ -15,15 +15,13 @@ const convert_Date = (date) => {
   return formattedDate;
 };
 
-// Get Current Balance, cureent day revenue, prev day revenue
+// Get Current Balance, current day revenue, prevday revenue
 router.get("/accounts", (req, res) => {
   const q = `SELECT date, opening_balance, closing_balance FROM my_shop.accounts ORDER BY date DESC LIMIT 2`;
   db.query(q, (error, data) => {
     if (error) {
       console.error("Error storing data:", error);
-      return res
-        .status(500)
-        .json({ error: "Error fetching current balance." }); // Internal server error
+      return res.status(500).json({ error: "Error fetching current balance." }); // Internal server error
     }
     const current_day_balance = data[0].closing_balance;
     const current_day_revenue =
@@ -159,9 +157,8 @@ router.get("/accounts/check", (req, res) => {
       console.error("Error Fetching accounts: ", err);
       return res.status(500).json({ error: "Error Fetching accounts" });
     }
-
     if (result[0].number === 0) {
-      return res.status(200).json({ success: "Welcome" });
+      return res.status(200).json({ success: "Welcome!" });
     }
   });
 });
