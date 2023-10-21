@@ -23,23 +23,27 @@ router.get("/accounts", (req, res) => {
       console.error("Error storing data:", error);
       return res.status(500).json({ error: "Error fetching current balance." }); // Internal server error
     }
-    const current_day_balance = data[0].closing_balance;
+    const balance = data[0].closing_balance;
     const current_day_revenue =
       data[0].closing_balance - data[0].opening_balance;
     const prev_day_revenue = data[1].closing_balance - data[1].opening_balance;
 
-    return res
-      .status(200)
-      .send({ current_day_balance, current_day_revenue, prev_day_revenue }); // OK
+    return res.status(200).send({
+      balance,
+      current_day_revenue,
+      prev_day_revenue,
+    });
+    // .send(data)
   });
 });
 
-//Creating new balance
+//New day Opening Blance create & Current day opening balance update
 router.post("/accounts", (req, res) => {
   if (Object.keys(req.body).length === 0) {
     return res.status(400).json({ error: "Balance information required!" });
   }
-  const opening_balance = parseFloat(req.body.opening_balance);
+  console.log(req.body);
+  const opening_balance = parseFloat(req.body.openingBalance);
   const id = uuidv4();
 
   const get_query =
@@ -91,9 +95,11 @@ router.post("/accounts", (req, res) => {
   });
 });
 
-//Updating the new day opening_balance
-router.post("/accounts/opening_balance", (req, res) => {
+//Creating new user Opening Balance for the new User
+router.post("/accounts/new_user", (req, res) => {
   const id = uuidv4();
+  const opening_balance = req.body.openingBalance;
+
   const get_query =
     "SELECT date AS current_day, closing_balance FROM accounts ORDER BY date DESC LIMIT 1";
 
@@ -103,30 +109,22 @@ router.post("/accounts/opening_balance", (req, res) => {
       return;
     }
 
-    if (convert_Date(result[0].current_day) !== convert_Date(new Date())) {
-      const closing_balance = result[0].closing_balance;
-      const insert_query =
+    if (result.length === 0) {
+      const q =
         "INSERT INTO `accounts` (`id`, `opening_balance`, `closing_balance`) VALUES (?)";
-      db.query(
-        insert_query,
-        [[id, closing_balance, closing_balance]],
-        (insertErr) => {
-          if (insertErr) {
-            console.error("Error Creating the Balance", insertErr);
-            return res
-              .status(500)
-              .json({ error: "Error Creating the Balance!" });
-          }
-          return res.status(200).json({ success: "Balance Created!" });
+      db.query(q, [[id, +opening_balance, +opening_balance]], (insertErr) => {
+        if (insertErr) {
+          console.error("Error Inserting Data: ", insertErr);
+          return res.status(500).json({ error: "Internal Error!" });
         }
-      );
-    }
-    if (convert_Date(result[0].current_day) === convert_Date(new Date())) {
-      return res.status(400).json({ error: "Balance Already Exist!" });
+
+        return res.status(200).json({ success: "Opening Balance Created!" });
+      });
+    } else {
+      return res.status(401).json({ error: "Balance Exist!" });
     }
   });
 });
-
 
 //Check for new user
 router.get("/accounts/check", (req, res) => {

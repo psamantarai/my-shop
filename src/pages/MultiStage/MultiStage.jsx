@@ -5,6 +5,7 @@ import Account from "../account/Account";
 
 const MultiStage = () => {
   const [count, setCount] = useState(0);
+  console.log(count);
   const navigatePage = () => {
     if (count === 0) {
       return <Welcome setCount={setCount} />;

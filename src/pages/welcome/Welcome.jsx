@@ -1,7 +1,7 @@
 import React, { useContext } from "react";
 import "./welcome.scss";
 import ArrowCircleRightRoundedIcon from "@mui/icons-material/ArrowCircleRightRounded";
-import { CheckOpeningBalance } from "../../context/CheckOpeningBalanceContext/CheckOpeningBalanceContext";
+
 const Welcome = ({ setCount }) => {
   return (
     <div className="welcome">

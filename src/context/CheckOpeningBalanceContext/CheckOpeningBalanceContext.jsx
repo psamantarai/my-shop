@@ -4,8 +4,8 @@ import axios from "axios";
 export const CheckOpeningBalance = createContext();
 
 export function CheckOpeningBalanceProvider({ children }) {
-  const [isPresent, setIsPresent] = useState(true);
-  const [isNewUser, setIsNewUser] = useState(true);
+  const [isPresent, setIsPresent] = useState(null);
+  const [isNewUser, setIsNewUser] = useState(null);
 
   const fetchIsNewUser = async () => {
     await axios
@@ -24,7 +24,13 @@ export function CheckOpeningBalanceProvider({ children }) {
   }, []);
   return (
     <CheckOpeningBalance.Provider
-      value={{ isNewUser, setIsNewUser, isPresent, setIsPresent }}
+      value={{
+        isNewUser,
+        setIsNewUser,
+        isPresent,
+        setIsPresent,
+        fetchIsNewUser,
+      }}
     >
       {children}
     </CheckOpeningBalance.Provider>
