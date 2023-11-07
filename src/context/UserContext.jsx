@@ -1,9 +1,9 @@
 import { createContext, useEffect, useState } from "react";
 import axios from "axios";
 
-export const CheckOpeningBalance = createContext();
+export const UserContext = createContext();
 
-export function CheckOpeningBalanceProvider({ children }) {
+export function UserContextProvider({ children }) {
   const [isPresent, setIsPresent] = useState(null);
   const [isNewUser, setIsNewUser] = useState(null);
 
@@ -23,7 +23,7 @@ export function CheckOpeningBalanceProvider({ children }) {
     fetchIsNewUser();
   }, []);
   return (
-    <CheckOpeningBalance.Provider
+    <UserContext.Provider
       value={{
         isNewUser,
         setIsNewUser,
@@ -33,6 +33,6 @@ export function CheckOpeningBalanceProvider({ children }) {
       }}
     >
       {children}
-    </CheckOpeningBalance.Provider>
+    </UserContext.Provider>
   );
 }

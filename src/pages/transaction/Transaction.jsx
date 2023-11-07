@@ -6,10 +6,10 @@ import { optionListConverter } from "../../utils/optionListConverter";
 import amountFormat, { kebabToCapitalize } from "../../utils/textConverter";
 import { v4 as uuidv4 } from "uuid";
 import DeleteOutlineOutlinedIcon from "@mui/icons-material/DeleteOutlineOutlined";
-import { toast } from "react-toastify";
 import axios from "axios";
-import { Link } from "@mui/material";
+
 import { useNavigate } from "react-router-dom";
+import { showToast } from "../../utils/showToast.js";
 
 const Transaction = () => {
   const { serviceList, serviceTypeList, serviceNameList } = useContext(
@@ -36,37 +36,21 @@ const Transaction = () => {
   const [totalAmount, setTotalAmount] = useState(0);
 
   const postTransacitonList = async () => {
-    await axios
-      .post("http://localhost:8000/api/transaction", transactionList)
-      .then((res) => {
-        toast.success(res.data.success, {
-          position: "top-right",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: false,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        console.log(res);
-      })
-      .catch((err) => {
-        toast.error(err.response.data.error, {
-          position: "top-right",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: false,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      });
+    try {
+      const res = await axios.post(
+        "http://localhost:8000/api/transaction",
+        transactionList
+      );
+      showToast(res.data.success);
+    } catch (error) {
+      showToast(error.response.data.message || error.message, "error");
+    }
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (transactionList.length === 0)
+      return showToast("Add Transctions to Submit!", "warning", 5);
     postTransacitonList();
     setData({
       id: uuidv4(),
@@ -94,16 +78,6 @@ const Transaction = () => {
     setTotalAmount(calcTotal(transactionList));
   }, [transactionList]);
 
-  // useEffect(() => {
-  //   let types = serviceList.filter(
-  //     (item) => item.service_name === serviceName.value
-  //   );
-  //   types = types.map((item) => item.service_type);
-  //   types = optionListConverter(types);
-  //   setServiceType(types);
-  //   setData((prev) => ({ ...prev, service_type: types.value }));
-  // }, [serviceName]);
-
   const handleChange = (e) => {
     setData((prev) => ({
       ...prev,
@@ -120,17 +94,14 @@ const Transaction = () => {
       serviceName === "" ||
       data.amount_recieved === 0
     ) {
-      toast.warning("Fill the details", {
-        position: "top-right",
-        autoClose: 1000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-        theme: "light",
-      });
+      showToast("Fill the details", "warning");
       return;
+    }
+    if (
+      data.amount_paid > data.amount_recieved &&
+      (serviceName !== "withdraw" || serviceName !== "transfer")
+    ) {
+      showToast("Payment Amount is Greater than Recieved!", "warning");
     }
 
     setTransactionList((prev) => [...prev, data]);
@@ -221,18 +192,20 @@ const Transaction = () => {
                 onChange={handleChange}
               />
             </div>
-            <div className="inputItems">
-              <label htmlFor="payment-bank">Payment Bank (Retailer)</label>
-              <input
-                autoComplete="off"
-                className="input"
-                type="text"
-                id="payment-bank"
-                name="payment_bank"
-                value={data.payment_bank}
-                onChange={handleChange}
-              />
-            </div>
+            {data.amount_paid > 0 && (
+              <div className="inputItems">
+                <label htmlFor="payment-bank">Payment Bank (Retailer)</label>
+                <input
+                  autoComplete="off"
+                  className="input"
+                  type="text"
+                  id="payment-bank"
+                  name="payment_bank"
+                  value={data.payment_bank}
+                  onChange={handleChange}
+                />
+              </div>
+            )}
             <div className="btn">
               <p>
                 Service not listed?{" "}

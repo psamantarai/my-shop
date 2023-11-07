@@ -1,102 +1,44 @@
 import React, { useContext, useEffect, useState } from "react";
 import "./service.scss";
 import axios from "axios";
-import { toast } from "react-toastify";
+
 import ServiceCard from "../../components/ServiceCard/ServiceCard";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { kebabToCapitalize } from "../../utils/textConverter";
 import { ServicesContext } from "../../context/AllService/ServicesContext";
+import { showToast } from "../../utils/showToast.js";
 
 const Service = () => {
   const { serviceList, fetchServices, serviceTypeList } = useContext(
     ServicesContext
   );
-
   const [data, setData] = useState({
     service_type: "",
     service_name: "",
   });
   const [query, setQuery] = useState("");
 
-  function filterUniqueKeyValues(list, key) {
-    const uniqueValues = [];
-    const seenValues = new Set();
-
-    for (const obj of list) {
-      const value = obj[key];
-
-      if (!seenValues.has(value)) {
-        seenValues.add(value);
-        uniqueValues.push(value);
-      }
+  const postService = async () => {
+    try {
+      const res = await axios.post("http://localhost:8000/api/service", data);
+      fetchServices();
+      console.log("success", res.data.success);
+      showToast(res.data.success);
+    } catch (error) {
+      showToast(error.response.data.message || error.message, "error");
     }
-
-    return uniqueValues;
-  }
-
-  const postData = async () => {
-    await axios
-      .post("http://localhost:8000/api/service", data)
-      .then((res) => {
-        fetchServices();
-        console.log(res);
-        toast.success(res.data.success, {
-          position: "top-right",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: false,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-        console.log(res);
-      })
-      .catch((err) => {
-        // console.log(res);
-        toast.error(err.response.data.error, {
-          position: "top-right",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: false,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      });
   };
   const deleteService = async (id) => {
-    await axios
-      .delete(`http://localhost:8000/api/service/${id}`)
-      .then((res) => {
-        fetchServices();
-        console.log(res);
-        toast.success(res.data.success, {
-          position: "top-right",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: false,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-        toast.error(err.response.data.error, {
-          position: "top-right",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: false,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      });
+    try {
+      const res = await axios.delete(`http://localhost:8000/api/service/${id}`);
+      fetchServices();
+      console.log(res);
+      showToast(res.data.success);
+    } catch (error) {
+      showToast(error.response.data.message || error.message, "error");
+    }
   };
+
   const handleDelete = (id) => {
     deleteService(id);
   };
@@ -106,10 +48,9 @@ const Service = () => {
       [e.target.name]: e.target.value,
     }));
   };
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    postData();
+    postService();
     setData({
       service_type: "",
       service_name: "",
@@ -132,7 +73,6 @@ const Service = () => {
       );
     });
   };
-
   const filteredList = getFilterList();
 
   return (

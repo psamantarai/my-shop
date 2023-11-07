@@ -1,84 +1,41 @@
 import React, { useContext, useState } from "react";
 import "./account.scss";
 import amountFormat from "../../utils/textConverter";
-import { CheckOpeningBalance } from "../../context/CheckOpeningBalanceContext/CheckOpeningBalanceContext";
+import { UserContext } from "../../context/UserContext";
 import axios from "axios";
-import { toast } from "react-toastify";
-import { DashBoardContext } from "../../context/DashBoardContext";
+import { BalanceContext } from "../../context/BalanceContext";
+import { showToast } from "../../utils/showToast.js";
 const Account = ({ setCount }) => {
-  const { isPresent, isNewUser, fetchIsNewUser } = useContext(
-    CheckOpeningBalance
-  );
-  const { data, fetchDashBoardData } = useContext(DashBoardContext);
-  console.log(data);
-  const [openingBalance, setNewDayOpeningBalance] = useState(
-    isNewUser ? 0 : data.balance
-  );
+  const { isPresent, isNewUser, fetchIsNewUser } = useContext(UserContext);
+  const { data, fetchBalanceData } = useContext(BalanceContext);
+
+  const [openingBalance, setNewDayOpeningBalance] = useState(data.balance);
   const setOpeningBalance = async () => {
-    await axios
-      .post("http://localhost:8000/api/accounts", {
+    try {
+      const res = await axios.post("http://localhost:8000/api/accounts", {
         openingBalance,
-      })
-      .then((res) => {
-        fetchIsNewUser();
-        fetchDashBoardData();
-        toast.success(res.data.success, {
-          position: "top-right",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: false,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
-      })
-      .catch((err) => {
-        toast.error(err.response.data.error, {
-          position: "top-right",
-          autoClose: 1000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: false,
-          draggable: true,
-          progress: undefined,
-          theme: "light",
-        });
       });
+      fetchIsNewUser();
+      fetchBalanceData();
+      showToast("success", res.data.success);
+    } catch (error) {
+      showToast("error", error.response.data.message || error.message);
+    }
   };
   const handleClick = () => {
     if (isNewUser) {
       const createOpeningBlance = async () => {
-        await axios
-          .post("http://localhost:8000/api/accounts/new_user", {
-            openingBalance,
-          })
-          .then((res) => {
-            fetchIsNewUser();
-            fetchDashBoardData();
-            toast.success(res.data.success, {
-              position: "top-right",
-              autoClose: 1000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: false,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-            });
-          })
-          .catch((err) => {
-            toast.error(err.response.data.error, {
-              position: "top-right",
-              autoClose: 1000,
-              hideProgressBar: false,
-              closeOnClick: true,
-              pauseOnHover: false,
-              draggable: true,
-              progress: undefined,
-              theme: "light",
-            });
-          });
+        try {
+          const res = await axios.post(
+            "http://localhost:8000/api/accounts/new_user",
+            { openingBalance }
+          );
+          fetchIsNewUser();
+          fetchBalanceData();
+          showToast(res.data.success);
+        } catch (error) {
+          showToast("error", error.response.data.message || error.message);
+        }
       };
       createOpeningBlance();
     } else if (!isNewUser && !isPresent) {
@@ -102,7 +59,20 @@ const Account = ({ setCount }) => {
               onChange={(e) => setNewDayOpeningBalance(e.target.value)}
             />
           </div>
-          <button onClick={handleClick}>Set</button>
+          <div
+            className="btn-div"
+            style={{
+              display: "flex",
+              marginTop: "10px",
+              width: "80%",
+              gap: "10px",
+            }}
+          >
+            <button onClick={handleClick}>Set</button>
+            {!isNewUser && isPresent && (
+              <button onClick={() => setCount(0)}>Cancel</button>
+            )}
+          </div>
         </div>
         <div className="down">
           <div className="prev-day-stats">

@@ -33,31 +33,31 @@ const createSchema = () => {
       console.log("Error Creating Account Table: ", accErr);
       return;
     }
-    console.log("Account Table Created");
+
     db.query(q.serviceTable, (serErr) => {
       if (serErr) {
         console.log("Error Creating Service Table: ", serErr);
         return;
       }
-      console.log("Service Table Created");
+
       db.query(q.transactionTable, (trErr) => {
         if (trErr) {
           console.log("Error Creating Transaction Table: ", trErr);
           return;
         }
-        console.log("Transaction Table Created");
+
         db.query(createBeforeInsertTriggerSQL, (triggerErr) => {
           if (triggerErr) {
             console.log("Error Creating trigger before insert.", triggerErr);
             return;
           }
-          console.log("Trigger Before Insert Created");
+
           db.query(createAfterInsertTriggerSQL, (triggerErr) => {
             if (triggerErr) {
               console.log("Error Creating trigger after insert.", triggerErr);
               return;
             }
-            console.log("Trigger After Insert Created");
+            console.log("DB Created");
           });
         });
       });

@@ -1,4 +1,3 @@
-import Sidebar from "./components/Sidebar/Sidebar";
 import Home from "./pages/home/Home";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -8,15 +7,13 @@ import Transaction from "./pages/transaction/Transaction";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Report from "./pages/report/Report";
 import "./layout.scss";
-import Welcome from "./pages/welcome/Welcome";
-import { useContext, useEffect } from "react";
-import { CheckOpeningBalance } from "./context/CheckOpeningBalanceContext/CheckOpeningBalanceContext";
-import axios from "axios";
-import Account from "./pages/account/Account";
+import { useContext } from "react";
+import { UserContext } from "./context/UserContext";
+
 import MultiStage from "./pages/MultiStage/MultiStage";
 
 function App() {
-  const { isPresent, isNewUser } = useContext(CheckOpeningBalance);
+  const { isPresent, isNewUser } = useContext(UserContext);
   const renderCheck = () => !(isPresent && !isNewUser);
 
   console.log(

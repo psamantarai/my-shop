@@ -3,18 +3,18 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
 import { ServiceContextProvider } from "./context/AllService/ServicesContext";
-import { CheckOpeningBalanceProvider } from "./context/CheckOpeningBalanceContext/CheckOpeningBalanceContext";
-import { DashBoardContextProvider } from "./context/DashBoardContext";
+import { UserContextProvider } from "./context/UserContext";
+import { BalanceContextProvider } from "./context/BalanceContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <CheckOpeningBalanceProvider>
+    <UserContextProvider>
       <ServiceContextProvider>
-        <DashBoardContextProvider>
+        <BalanceContextProvider>
           <App />
-        </DashBoardContextProvider>
+        </BalanceContextProvider>
       </ServiceContextProvider>
-    </CheckOpeningBalanceProvider>
+    </UserContextProvider>
   </React.StrictMode>
 );
